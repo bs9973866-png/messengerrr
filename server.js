@@ -453,6 +453,28 @@ const upload = multer({
   storage: multer.diskStorage({ destination: UPLOAD_DIR, filename: (req, file, cb) => cb(null, newId()) }),
   limits: { fileSize: MAX_UPLOAD, files: 1, fields: 12, fieldSize: 4096 },
 });
+app.post('/api/profile/music', auth, (req,res,next) => {
+  upload.single('file')(req,res,err => {
+    if(err){const msg=err.code==='LIMIT_FILE_SIZE'?'MP3 больше допустимого размера':'Ошибка загрузки MP3';return res.status(400).json({error:msg});}
+    next();
+  });
+}, (req,res) => {
+  const file=req.file;
+  if(!file)return res.status(400).json({error:'Выбери MP3-файл'});
+  const mime=normMime(file.mimetype);
+  if(file.size>30*1024*1024 || !['audio/mpeg','audio/mp4','audio/x-m4a'].includes(mime)){fs.unlink(file.path,()=>{});return res.status(400).json({error:'Поддерживаются MP3 и M4A до 30 МБ'});}
+  db.profiles ||= {};
+  const p=db.profiles[req.user.id] ||= {};
+  if(p.musicFileId)removeFile(p.musicFileId);
+  db.files[file.filename]={id:file.filename,owner:req.user.id,scope:'profile',name:sanitizeFilename(file.originalname),mime,size:file.size};
+  p.musicFileId=file.filename;save();
+  res.json({ok:true,url:'/api/files/'+encodeURIComponent(file.filename)});
+});
+app.delete('/api/profile/music', auth, (req,res) => {
+  const p=db.profiles?.[req.user.id]||{};
+  if(p.musicFileId)removeFile(p.musicFileId);
+  delete p.musicFileId;save();res.json({ok:true});
+});
 
 function removeFile(id) {
   delete db.files[id];
@@ -510,7 +532,9 @@ app.post('/api/upload', auth, (req, res, next) => {
 app.get('/api/files/:id', auth, (req, res) => {
   const f = db.files[req.params.id];
   const feedAccess = f?.scope === 'feed' && (f.owner === req.user.id || Object.values(db.posts || {}).some(post => post.file?.id === f.id));
-  if (!f || (!feedAccess && !memberChat(req.user.id, f.chatId))) return res.status(404).json({ error: 'Файл не найден' });
+  const profileAccess = f?.scope === 'profile' && Object.values(db.profiles || {}).some(p => p.musicFileId === f.id);
+  const stickerAccess = f?.scope === 'sticker' && Object.values(db.stickerPacks || {}).some(pack => (pack.stickers || []).some(st => st.fileId === f.id));
+  if (!f || (!feedAccess && !profileAccess && !stickerAccess && !memberChat(req.user.id, f.chatId))) return res.status(404).json({ error: 'Файл не найден' });
   const inline = INLINE_MIME.has(f.mime) && req.query.download !== '1';
   res.setHeader('Content-Type', INLINE_MIME.has(f.mime) ? f.mime : 'application/octet-stream');
   res.setHeader('Content-Disposition', `${inline ? 'inline' : 'attachment'}; filename*=UTF-8''${encodeURIComponent(f.name)}`);
@@ -520,7 +544,7 @@ app.get('/api/files/:id', auth, (req, res) => {
   });
 });
 
-require('./social')(app, { auth, db, save, newId, cleanText, addMessage, broadcastMessage });
+require('./social')(app, { auth, db, save, newId, cleanText, addMessage, broadcastMessage, upload, UPLOAD_DIR });
 
 app.use(express.static(PUBLIC_DIR));
 app.use('/api', (req, res) => res.status(404).json({ error: 'Не найдено' }));
