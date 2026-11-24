@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#2b7cd3">
   <title>Мессенджер</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232b7cd3'/%3E%3Cpath d='M16 20h32v20H30l-8 8v-8h-6z' fill='%23fff'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="style.css?v=midnight1">
+  <link rel="stylesheet" href="style.css?v=drawer2">
 </head>
 <body>
   <div id="auth" class="auth" hidden>
@@ -26,6 +26,8 @@
   </div>
 
   <div id="app" class="app" hidden>
+    <button id="menuBtn" class="menu-fab" type="button" aria-label="Открыть меню" aria-expanded="false"><span></span><span></span><span></span></button>
+    <div id="drawerShade" class="drawer-shade"></div>
     <aside id="side" class="side">
       <header class="side-head">
         <button id="meBtn" class="me" title="Профиль"></button>
@@ -71,6 +73,6 @@
   </div>
 
   <div id="layer"></div>
-  <script src="app.js?v=midnight1"></script>
+  <script src="app.js?v=drawer2"></script>
 </body>
 </html>
