@@ -578,3 +578,11 @@ body{background:radial-gradient(ellipse at 12% -8%,rgba(32,118,184,.18),transpar
  .app.chat-index-open.drawer-open .side,.app.social-page-open.drawer-open .side{transform:translateX(0)}
  .app.chat-index-open .social-view,.app.social-page-open .social-view{padding-top:64px!important}
 }
+
+
+/* LUNEX brand identity */
+.auth-card .brand-icon{width:58px;height:58px;stroke:#78e2ff;stroke-width:2.1;filter:drop-shadow(0 0 12px rgba(72,190,255,.62))}
+.auth-card .brand-title{margin:0;text-align:center;font-size:27px;font-weight:850;letter-spacing:.22em;line-height:1.05;color:#effaff;text-shadow:0 0 24px rgba(72,190,255,.2)}
+.auth-card .brand-subtitle{margin:-7px 0 5px;text-align:center;font-size:10px;font-weight:750;letter-spacing:.38em;color:#6fbce8}
+.empty-brand{margin-top:9px;font-size:16px;font-weight:850;letter-spacing:.28em;color:#c9eaff;text-shadow:0 0 22px rgba(66,176,245,.24)}
+.empty .brand-icon{stroke:#78e2ff;filter:drop-shadow(0 0 22px rgba(54,168,255,.55))}
