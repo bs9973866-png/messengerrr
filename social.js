@@ -59,7 +59,7 @@ module.exports = function mountSocial(app, ctx) {
   });
 
   app.get('/api/social/feed', auth, (req,res) => {
-    const posts = Object.values(db.posts).flat().sort((a,b) => b.createdAt-a.createdAt).slice(0,100);
+    const posts = Object.values(db.posts).flat().sort((a,b) => { const score = p => ((p.likes||[]).length*3)+((p.reposts||[]).length*5)+Math.max(0,24-(Date.now()-p.createdAt)/3600000); return score(b)-score(a); }).slice(0,100);
     res.json({posts:posts.map(p=>publicPost(p,req.user.id))});
   });
   app.post('/api/social/posts', auth, (req,res) => {
@@ -148,7 +148,7 @@ module.exports = function mountSocial(app, ctx) {
     res.json({gift:item});
   });
   app.get('/api/social/leaderboard', auth, (req,res) => {
-    const rows=Object.values(db.users).map(u=>({profile:profileOf(u)})).sort((a,b)=>(b.profile.postCount*5+b.profile.messages)-(a.profile.postCount*5+a.profile.messages)).slice(0,20);
+    const rows=Object.values(db.users).map(u=>({profile:profileOf(u)})).sort((a,b)=>(b.profile.postCount*5+b.profile.messages*0.2)-(a.profile.postCount*5+a.profile.messages*0.2)).slice(0,20);
     res.json({users:rows});
   });
 
