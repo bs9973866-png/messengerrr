@@ -507,7 +507,7 @@ app.get('/api/files/:id', auth, (req, res) => {
   });
 });
 
-require('./social')(app, { auth, db, save, newId, cleanText });
+require('./social')(app, { auth, db, save, newId, cleanText, addMessage, broadcastMessage });
 
 app.use(express.static(PUBLIC_DIR));
 app.use('/api', (req, res) => res.status(404).json({ error: 'Не найдено' }));
