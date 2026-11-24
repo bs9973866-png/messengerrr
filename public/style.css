@@ -247,3 +247,71 @@ body.snow-mode:before{content:"";position:fixed;inset:0;pointer-events:none;z-in
 .shop-art{animation:novaPetFloat 2.8s ease-in-out infinite;filter:drop-shadow(0 10px 12px rgba(30,80,130,.16))}.shop-card:nth-child(2n) .shop-art{animation-delay:.7s}@keyframes novaPetFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}.post{animation:novaAppear .35s ease both}@keyframes novaAppear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .reaction-chip{display:inline-block;padding:2px 7px;border-radius:12px;background:var(--panel2);color:var(--accent);font-size:11px;margin-left:3px}.social-nav button{transition:transform .18s,background .18s}.social-nav button:active{transform:scale(.97)}
 .gift-message{background:linear-gradient(135deg,#e8f6ff,#fff0f8)!important;border:1px solid #b9dfff;animation:giftPop .7s cubic-bezier(.2,.9,.2,1.2) both}.gift-message:after{content:'✦';position:absolute;right:8px;top:-9px;color:#5d9bd0;animation:giftSpark 1.5s ease-in-out infinite}@keyframes giftPop{0%{transform:scale(.82);opacity:.3}70%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}@keyframes giftSpark{50%{transform:rotate(35deg) scale(1.3);opacity:.45}}
+
+/* Polished midnight-blue mobile interface */
+:root {
+  color-scheme: dark;
+  --bg:#080f1c; --panel:#101b2d; --panel2:#16243a; --text:#edf5ff; --muted:#91a5bf;
+  --line:rgba(142,176,220,.15); --accent:#36a8ff; --accent-text:#04111f;
+  --out:#12385a; --in:#15253a; --danger:#ff657a; --ok:#42d6a4;
+  --shadow:0 18px 50px rgba(0,0,0,.34);
+}
+body{background:radial-gradient(ellipse at 12% -10%,rgba(28,116,190,.22),transparent 42%),radial-gradient(ellipse at 100% 100%,rgba(20,72,135,.14),transparent 38%),var(--bg);color:var(--text)}
+button{transition:background .18s ease,border-color .18s ease,transform .18s ease,filter .18s ease}
+button:active{transform:scale(.97)}
+.icon{background:rgba(255,255,255,.035);border:1px solid var(--line);color:#b8d7f7}
+.icon:hover{background:rgba(54,168,255,.14);border-color:rgba(54,168,255,.34)}
+.primary{background:linear-gradient(135deg,#4ab8ff,#2587e8);color:#04111f;box-shadow:0 7px 22px rgba(36,145,230,.22)}
+.secondary{background:#17263c;border-color:var(--line);color:#d8eaff}
+.auth-card,.modal,.panel,.side,.chat-head,.composer-wrap{background:rgba(16,27,45,.96);border-color:var(--line);backdrop-filter:blur(16px)}
+.auth-card{border:1px solid rgba(103,174,237,.2);box-shadow:0 22px 70px rgba(0,0,0,.4)}
+.auth-card .logo{color:#53baff;text-shadow:0 0 28px rgba(54,168,255,.42)}
+.auth-card input,.search input,.modal input,.modal textarea,.composer textarea{background:#0b1626;border-color:var(--line);color:var(--text)}
+.side{box-shadow:12px 0 40px rgba(0,0,0,.12)}
+.side-head{border-bottom:1px solid var(--line)}
+.social-nav{grid-template-columns:repeat(3,minmax(0,1fr));padding:10px 12px}
+.social-nav button{background:#111f33;border:1px solid var(--line);color:#a9c1dc;text-align:center}
+.social-nav button.active,.social-nav button:hover{background:linear-gradient(135deg,#237fc2,#185b9d);color:#fff;border-color:rgba(88,184,255,.4)}
+.wallet{background:linear-gradient(120deg,rgba(27,111,174,.28),rgba(22,54,88,.55));border:1px solid rgba(66,165,239,.2);color:#bde4ff}
+.wallet b{color:#fff}
+.social-view{background:transparent}
+.social-hero{background:linear-gradient(125deg,rgba(22,82,130,.72),rgba(17,35,60,.9) 65%,rgba(18,65,106,.65));border:1px solid rgba(92,177,237,.2);color:#eaf6ff;box-shadow:var(--shadow)}
+.panel{box-shadow:0 12px 32px rgba(0,0,0,.18);border-radius:18px}
+.panel textarea,.panel input,.social-view input,.social-view textarea,.social-view select{background:#0b1626;border-color:var(--line);color:var(--text)}
+.panel button,.shop-card button{background:linear-gradient(135deg,#248bd0,#1764a8);color:white}
+.post footer button,.shop-card .secondary{background:#17263c;color:#d9ebff;border:1px solid var(--line)}
+.profile-banner{background:linear-gradient(125deg,#0f4774,#1d8fc4 55%,#153c68);border:1px solid rgba(95,184,241,.25)}
+.social-view .panel>.avatar{width:88px;height:88px;font-size:30px;border:3px solid rgba(79,181,255,.55);box-shadow:0 0 28px rgba(54,168,255,.2)}
+.badge{background:rgba(43,139,211,.2);color:#9bd7ff;border:1px solid rgba(72,169,235,.2)}
+.shop-card{background:linear-gradient(155deg,#14243a,#0f1a2b)}
+.chat-item{border-bottom:1px solid rgba(142,176,220,.055)}
+.chat-item.active{background:linear-gradient(100deg,#155d93,#164574);color:#fff}
+.chat-item .sub,.chat-item .time{color:#8fa7c2}
+.chat-head{box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.bubble{border:1px solid rgba(144,177,217,.1);box-shadow:0 5px 18px rgba(0,0,0,.12)}
+.row-msg.out .bubble{background:linear-gradient(135deg,#164b76,#123656);border-color:rgba(69,164,231,.22)}
+.row-msg:not(.out) .bubble{background:#15243a}
+.meta{color:#9bb1ca}
+.composer textarea{border-radius:22px}
+.toast{background:#14243a;border:1px solid rgba(104,183,240,.24);color:#eff8ff}
+.modal .mf{border-top:1px solid var(--line)}
+.modal label{color:var(--muted);font-size:13px}
+.modal input[type=file]{width:100%;padding:10px;border:1px dashed rgba(112,171,224,.35);border-radius:12px;background:#0b1626;color:var(--muted)}
+.avatar{background:linear-gradient(135deg,#278dcc,#2353a0);box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.avatar img{display:block}
+.recording{background:#c83e58!important;color:#fff!important;animation:recordPulse 1s infinite}
+@keyframes recordPulse{50%{box-shadow:0 0 0 7px rgba(255,74,104,.16)}}
+.group-user{display:flex!important;align-items:center;gap:9px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#0c1727}
+.group-user input{width:auto!important;margin:0!important}
+.img,.vid{max-width:min(100%,420px);border-radius:12px}
+.bubble audio{max-width:240px;width:100%}
+@media(max-width:760px){
+  .side{background:rgba(10,19,33,.98)}
+  .social-nav{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .social-nav button{font-size:12px;padding:9px 4px}
+  .social-view{padding:14px}
+  .social-hero{padding:22px}
+  .profile-banner{height:130px}
+  .modal{max-height:90dvh}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
