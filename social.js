@@ -25,6 +25,8 @@ module.exports = function mountSocial(app, ctx) {
       bio: p.bio || '', status: p.status || '', avatar: p.avatar || '',
       banner: p.banner || '', theme: p.theme || 'winter',
       badges, pet: p.pet || '', coins: db.wallets[u.id] || 0,
+      statusImage: p.statusImage || '', musicTitle: p.musicTitle || '', musicUrl: p.musicUrl || '',
+      accent: p.accent || '#55baff', frame: p.frame || 'none',
       postCount: posts.length, joinedAt: u.createdAt,
       messages: (db.activity[u.id] || {}).messages || 0,
       admin: isAdmin(u)
