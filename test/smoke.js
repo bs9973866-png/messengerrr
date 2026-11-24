@@ -109,6 +109,30 @@ async function main() {
   assert.strictEqual(wc.events.some((e) => e.t === 'message'), false);
   ok('text message delivered to member, not to outsider');
 
+  wa.sendJson({ t: 'react', chatId: direct.id, id: got.message.id, reaction: '🔥' });
+  const reacted = await wb.waitFor((e) => e.t === 'reaction' && e.id === got.message.id);
+  assert.ok(reacted.reactions['🔥'].includes(alice.me.id));
+  ok('custom emoji reactions are broadcast to chat members');
+
+  const profileUpdate = await req('POST', '/api/social/profile', { cookie: alice.cookie, body: {
+    statusImage: 'data:image/png;base64,aGVsbG8=', musicTitle: 'Test track', musicUrl: 'https://example.com/track', accent: '#12abef', frame: 'ghoul'
+  }});
+  assert.strictEqual(profileUpdate.status, 200);
+  assert.strictEqual(profileUpdate.json.profile.musicTitle, 'Test track');
+  assert.strictEqual(profileUpdate.json.profile.frame, 'ghoul');
+  assert.strictEqual(profileUpdate.json.profile.accent, '#12abef');
+  assert.strictEqual((await req('POST', '/api/social/profile', { cookie: alice.cookie, body: { musicUrl: 'javascript:alert(1)' } })).status, 400);
+  ok('custom status art, profile music, accent and frame validation');
+
+  const pack = await req('POST', '/api/social/stickers', { cookie: alice.cookie, body: { name: 'Test pack', stickers: ['data:image/png;base64,aGVsbG8='] } });
+  assert.strictEqual(pack.status, 200);
+  const sentSticker = await req('POST', '/api/social/stickers/' + pack.json.pack.id + '/send', { cookie: alice.cookie, body: { chatId: direct.id, index: 0 } });
+  assert.strictEqual(sentSticker.status, 200);
+  const stickerEvent = await wb.waitFor((e) => e.t === 'message' && e.message.type === 'sticker');
+  assert.strictEqual(stickerEvent.message.stickerData, 'data:image/png;base64,aGVsbG8=');
+  assert.strictEqual((await req('POST', '/api/social/stickers/' + pack.json.pack.id + '/send', { cookie: alice.cookie, body: { chatId: direct.id, index: 4 } })).status, 400);
+  ok('sticker packs can send individual stickers into a chat');
+
   wb.sendJson({ t: 'typing', chatId: direct.id });
   await wa.waitFor((e) => e.t === 'typing' && e.userId === bob.me.id);
   wb.sendJson({ t: 'read', chatId: direct.id, seq: got.message.seq });
