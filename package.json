@@ -1,7 +1,7 @@
 {
-  "name": "messenger",
+  "name": "lunex-messenger",
   "version": "1.0.0",
-  "description": "Self-hosted web messenger: chats, groups, voice and video messages, files, audio/video calls (WebRTC)",
+  "description": "LUNEX Messenger — self-hosted web messenger with chats, groups, voice and video messages, files and WebRTC calls",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
