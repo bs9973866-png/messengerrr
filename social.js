@@ -125,6 +125,7 @@ module.exports = function mountSocial(app, ctx) {
     delete db.posts[req.params.id]; save(); res.json({ok:true});
   });
 
+  app.get('/api/social/inventory', auth, (req,res) => { const names={'meme-wow':['Вау','gift-wow.svg'],'meme-bruh':['Брух','gift-bruh.svg'],'arcade':['Аркада','gift-arcade.svg'],'pixel-heart':['Пиксельное сердце','gift-heart.svg']}; const owned=db.gifts[req.user.id]||{}; res.json({items:Object.entries(owned).filter(([id,count])=>count>0&&names[id]).map(([id,count])=>({id,count,name:names[id][0],art:'/assets/illustrations/'+names[id][1]}))}); });
   app.get('/api/social/shop', auth, (req,res) => res.json({
     coins:db.wallets[req.user.id]||0,
     ownedPets:db.pets[req.user.id]||[],
