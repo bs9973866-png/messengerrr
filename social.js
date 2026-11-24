@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function mountSocial(app, ctx) {
-  const { auth, db, save, newId, cleanText } = ctx;
+  const { auth, db, save, newId, cleanText, addMessage, broadcastMessage } = ctx;
   db.posts ||= {};
   db.wallets ||= {};
   db.activity ||= {};
@@ -141,7 +141,9 @@ module.exports = function mountSocial(app, ctx) {
     if(!owned[gift]) return res.status(403).json({error:'Сначала купи этот подарок'});
     owned[gift]--; if(!owned[gift]) delete owned[gift];
     const item={id:newId(),from:req.user.id,to:to.id,gift,chatId,createdAt:Date.now()};
-    db.gifts.sent ||= []; db.gifts.sent.push(item); save();
+    db.gifts.sent ||= []; db.gifts.sent.push(item);
+    const message = addMessage(chat, req.user.id, { type:'text', text:'Подарок отправлен: '+gift+' ✦' });
+    broadcastMessage(chat, message); save();
     res.json({gift:item});
   });
   app.get('/api/social/leaderboard', auth, (req,res) => {
