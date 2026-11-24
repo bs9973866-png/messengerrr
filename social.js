@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = function mountSocial(app, ctx) {
-  const { auth, db, save, newId, cleanText, addMessage, broadcastMessage, upload, UPLOAD_DIR } = ctx;
+  const { auth, db, save, newId, cleanText, addMessage, broadcastMessage, upload, stickerUpload, UPLOAD_DIR } = ctx;
   db.posts ||= {};
   db.wallets ||= {};
   db.activity ||= {};
@@ -158,7 +158,7 @@ module.exports = function mountSocial(app, ctx) {
   });
   app.get('/api/social/stickers', auth, (req,res) => res.json({packs:Object.values(db.stickerPacks).filter(p=>p.ownerId===req.user.id || p.public).map(p=>({...p,owner:db.users[p.ownerId]?.name||'Автор'}))}));
   app.post('/api/social/stickers', auth, (req,res,next) => {
-    upload.array('stickers',30)(req,res,err=>{if(err)return res.status(400).json({error:err.code==='LIMIT_FILE_SIZE'?'Стикер превышает общий лимит загрузки':'Не удалось загрузить стикеры'});next()});
+    stickerUpload.array('stickers',30)(req,res,err=>{if(err)return res.status(400).json({error:err.code==='LIMIT_FILE_SIZE'?'Стикер превышает общий лимит загрузки':'Не удалось загрузить стикеры'});next()});
   }, (req,res) => {
     const name=cleanText(req.body?.name,40), files=req.files||[];
     const bad=files.find(f=>f.size>30*1024*1024 || !['image/png','image/jpeg','image/gif','image/webp'].includes(String(f.mimetype||'').split(';')[0].toLowerCase()));
