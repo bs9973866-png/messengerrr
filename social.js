@@ -143,7 +143,7 @@ module.exports = function mountSocial(app, ctx) {
     owned[gift]--; if(!owned[gift]) delete owned[gift];
     const item={id:newId(),from:req.user.id,to:to.id,gift,chatId,createdAt:Date.now()};
     db.gifts.sent ||= []; db.gifts.sent.push(item);
-    const message = addMessage(chat, req.user.id, { type:'text', text:'Подарок отправлен: '+gift+' ✦' });
+    const message = addMessage(chat, req.user.id, { type:'gift', gift, text:'Подарок отправлен: '+gift+' ✦' });
     broadcastMessage(chat, message); save();
     res.json({gift:item});
   });
