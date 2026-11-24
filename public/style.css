@@ -441,3 +441,32 @@ button:disabled{opacity:.55;cursor:wait}
 .shop-card .shop-art.art-pixel-heart,.gift-option .gift-thumb.art-pixel-heart{background-position:100% 100%}
 .gift-option .gift-thumb{display:block;width:38px;height:38px;flex:none;border-radius:10px;border:1px solid rgba(108,190,246,.16)}
 .shop-card .shop-art:after{content:"";position:absolute;inset:auto 16% 8px;height:12px;border-radius:50%;background:rgba(0,0,0,.3);filter:blur(8px)}
+
+/* Feed media, comments and administrator tools */
+.post-composer{display:grid;gap:12px}
+.post-upload{display:flex;align-items:center;gap:9px;width:max-content;max-width:100%;padding:10px 13px;border:1px solid var(--line);border-radius:12px;color:#a9dfff;cursor:pointer}
+.post-upload input{display:none!important}
+.post-upload .ui-icon{width:19px;height:19px}
+.post-head{display:flex;align-items:center;gap:10px}
+.post-head>span:last-child{display:grid;gap:3px}
+.post-head small{color:var(--muted);font-size:11px}
+.post-text{white-space:pre-wrap;overflow-wrap:anywhere}
+.post-media{display:block;width:100%;max-height:520px;object-fit:contain;border-radius:14px;background:#06101c;margin:12px 0}
+.post-comments{display:grid;gap:9px;margin-top:12px}
+.post-comment{display:flex;gap:8px;align-items:baseline;font-size:13px}
+.post-comment b{white-space:nowrap;color:#bfe5ff}
+.comment-form{display:flex;gap:8px;margin-top:12px}
+.comment-form input{min-width:0;flex:1}
+.comment-count{margin-left:auto;color:var(--muted);font-size:12px;align-self:center}
+.admin-nav{border:1px solid rgba(81,180,255,.25)!important;background:rgba(48,143,210,.12)!important}
+.admin-card{display:grid;gap:12px}
+.admin-card h3{margin:0 0 4px}
+.admin-card label{display:grid;gap:7px;color:var(--muted);font-size:13px}
+.admin-card input{width:100%;padding:12px;border-radius:11px;border:1px solid var(--line);background:#09192a;color:#eaf6ff}
+.admin-actions{display:flex;gap:9px;flex-wrap:wrap}
+.admin-users{display:grid;gap:8px}
+.admin-user{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;border-radius:11px;background:rgba(31,75,111,.18)}
+.admin-user>span:first-child{display:grid;gap:3px}
+.admin-user small{color:var(--muted)}
+.admin-status{font-size:11px;color:#72d8a4}
+.admin-status.is-banned{color:#ff8794}
