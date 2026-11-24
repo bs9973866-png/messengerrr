@@ -243,3 +243,5 @@ input, textarea { font: inherit; color: inherit; }
 body.snow-mode:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:20;opacity:.35;background-image:radial-gradient(2px 2px at 20px 30px,#fff 99%,transparent),radial-gradient(2px 2px at 80px 110px,#fff 99%,transparent),radial-gradient(1px 1px at 130px 70px,#fff 99%,transparent);background-size:170px 160px;animation:novaSnow 12s linear infinite}
 @keyframes novaSnow{from{background-position:0 -160px}to{background-position:0 160px}}
 @media(max-width:700px){.social-view{padding:14px}.social-nav{grid-template-columns:repeat(3,1fr)}.social-nav button{font-size:11px;padding:8px 5px}.social-hero{padding:22px}.shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.shop-art{animation:novaPetFloat 2.8s ease-in-out infinite;filter:drop-shadow(0 10px 12px rgba(30,80,130,.16))}.shop-card:nth-child(2n) .shop-art{animation-delay:.7s}@keyframes novaPetFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}.post{animation:novaAppear .35s ease both}@keyframes novaAppear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
