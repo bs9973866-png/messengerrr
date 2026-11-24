@@ -91,7 +91,7 @@ function colorFor(seed) {
 function pubUser(u) {
   if (!u) return { id: 'deleted', username: '', name: 'Удалён', color: '#888', online: false, lastSeen: 0 };
   const profile = db.profiles?.[u.id] || {};
-  return { id: u.id, username: u.username, name: u.name, color: u.color, avatar: profile.avatar || '', status: profile.status || '', online: isOnline(u.id), lastSeen: u.lastSeen || 0, admin: String(u.username || '').toLowerCase() === 'zeronoice' };
+  return { id: u.id, username: u.username, name: u.name, color: u.color, avatar: profile.avatar || '', status: profile.status || '', online: isOnline(u.id), lastSeen: u.lastSeen || 0, admin: !!db.adminId && u.id === db.adminId };
 }
 
 function msgView(m) {
@@ -309,6 +309,7 @@ app.post('/api/register', async (req, res) => {
       salt, hash: await hashPassword(password, salt), createdAt: Date.now(), lastSeen: Date.now(),
     };
     db.users[user.id] = user;
+    if (!db.adminId && un === 'zeronoice') db.adminId = user.id;
     startSession(req, res, user);
     save();
     res.json({ ok: true });
@@ -645,6 +646,7 @@ function handleCall(ws, msg) {
 
 function handleMessage(ws, msg) {
   const uid = ws.userId;
+  if (db.bans?.[uid]) { try { ws.close(1008, 'Account banned'); } catch {} return; }
   if (!msg || typeof msg.t !== 'string') return;
   if (msg.t.startsWith('call:')) return handleCall(ws, msg);
   switch (msg.t) {
