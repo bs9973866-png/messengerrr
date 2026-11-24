@@ -9,6 +9,8 @@ module.exports = function mountSocial(app, ctx) {
   db.gifts ||= {};
   db.pets ||= {};
   db.profiles ||= {};
+  db.bans ||= {};
+  const isAdmin = (u) => String(u?.username || '').toLowerCase() === 'zeronoice';
 
   const profileOf = (u) => {
     const p = db.profiles[u.id] || {};
@@ -20,12 +22,15 @@ module.exports = function mountSocial(app, ctx) {
       banner: p.banner || '', theme: p.theme || 'winter',
       badges, pet: p.pet || '', coins: db.wallets[u.id] || 0,
       postCount: posts.length, joinedAt: u.createdAt,
-      messages: (db.activity[u.id] || {}).messages || 0
+      messages: (db.activity[u.id] || {}).messages || 0,
+      admin: isAdmin(u)
     };
   };
   const validImage = (v) => typeof v === 'string' && v.length <= 120000 && /^data:image\/(png|jpeg|webp|gif);base64,[a-z0-9+/=]+$/i.test(v);
   const publicPost = (post, uid) => ({
     ...post,
+    file: post.file ? { ...post.file, url: '/api/files/' + encodeURIComponent(post.file.id) } : null,
+    comments: (post.comments || []).map(c => ({ ...c, author: db.users[c.authorId] ? { id: db.users[c.authorId].id, username: db.users[c.authorId].username, name: db.users[c.authorId].name } : null })),
     author: (() => { const u = db.users[post.authorId]; return u ? { id:u.id, username:u.username, name:u.name, ...profileOf(u) } : null; })(),
     liked: (post.likes || []).includes(uid),
     reposted: (post.reposts || []).includes(uid),
@@ -65,13 +70,27 @@ module.exports = function mountSocial(app, ctx) {
   app.post('/api/social/posts', auth, (req,res) => {
     if (limited('post:'+req.user.id, 20, 60*60*1000)) return res.status(429).json({error:'Слишком часто. Попробуй позже.'});
     const text = cleanText(req.body?.text, 1200);
-    if (!text) return res.status(400).json({error:'Напиши что-нибудь для публикации'});
-    const post = {id:newId(), authorId:req.user.id, text, createdAt:Date.now(), likes:[], reposts:[]};
+    const fileId = String(req.body?.fileId || '');
+    const file = fileId ? db.files[fileId] : null;
+    if (fileId && (!file || file.scope !== 'feed' || file.owner !== req.user.id || (!file.mime.startsWith('image/') && !file.mime.startsWith('video/')))) return res.status(400).json({error:'Файл публикации не найден'});
+    if (!text && !file) return res.status(400).json({error:'Добавь текст, фото или видео'});
+    const post = {id:newId(), authorId:req.user.id, text, file: file ? {id:file.id,name:file.name,mime:file.mime,size:file.size} : null, comments:[], createdAt:Date.now(), likes:[], reposts:[]};
     (db.posts[post.id] ||= []);
     db.posts[post.id] = post;
     db.wallets[req.user.id] = (db.wallets[req.user.id] || 0) + 5;
     save();
     res.json({post:publicPost(post,req.user.id), coins:db.wallets[req.user.id]});
+  });
+  app.post('/api/social/posts/:id/comments', auth, (req,res) => {
+    const post = db.posts[req.params.id];
+    if (!post) return res.status(404).json({error:'Пост не найден'});
+    const text = cleanText(req.body?.text, 500);
+    if (!text) return res.status(400).json({error:'Напиши комментарий'});
+    post.comments ||= [];
+    if (post.comments.length >= 500) return res.status(400).json({error:'Слишком много комментариев'});
+    const comment = {id:newId(),authorId:req.user.id,text,createdAt:Date.now()};
+    post.comments.push(comment); save();
+    res.json({comment:{...comment,author:{id:req.user.id,username:req.user.username,name:req.user.name}}});
   });
   app.post('/api/social/posts/:id/like', auth, (req,res) => {
     const post = db.posts[req.params.id];
@@ -146,6 +165,39 @@ module.exports = function mountSocial(app, ctx) {
     const message = addMessage(chat, req.user.id, { type:'gift', gift, text:'Подарок отправлен: '+gift });
     broadcastMessage(chat, message); save();
     res.json({gift:item});
+  });
+  app.get('/api/social/admin/users', auth, (req,res) => {
+    if (!isAdmin(req.user)) return res.status(403).json({error:'Недостаточно прав'});
+    const q = String(req.query.q || '').trim().toLowerCase();
+    const users = Object.values(db.users).filter(u => !q || u.username.includes(q) || u.name.toLowerCase().includes(q)).slice(0,100).map(u => ({id:u.id,username:u.username,name:u.name,banned:!!db.bans[u.id],coins:db.wallets[u.id]||0}));
+    res.json({users});
+  });
+  app.post('/api/social/admin/ban', auth, (req,res) => {
+    if (!isAdmin(req.user)) return res.status(403).json({error:'Недостаточно прав'});
+    const username = String(req.body?.username || '').trim().replace(/^@/,'').toLowerCase();
+    const target = Object.values(db.users).find(u => u.username === username);
+    if (!target) return res.status(404).json({error:'Пользователь не найден'});
+    if (isAdmin(target)) return res.status(403).json({error:'Нельзя заблокировать администратора'});
+    db.bans[target.id] = {reason:cleanText(req.body?.reason,160)||'Нарушение правил',by:req.user.id,at:Date.now()};
+    for (const [key,session] of Object.entries(db.sessions)) if (session.userId === target.id) delete db.sessions[key];
+    save(); res.json({ok:true,username:target.username});
+  });
+  app.post('/api/social/admin/unban', auth, (req,res) => {
+    if (!isAdmin(req.user)) return res.status(403).json({error:'Недостаточно прав'});
+    const username = String(req.body?.username || '').trim().replace(/^@/,'').toLowerCase();
+    const target = Object.values(db.users).find(u => u.username === username);
+    if (!target) return res.status(404).json({error:'Пользователь не найден'});
+    delete db.bans[target.id]; save(); res.json({ok:true,username:target.username});
+  });
+  app.post('/api/social/admin/coins', auth, (req,res) => {
+    if (!isAdmin(req.user)) return res.status(403).json({error:'Недостаточно прав'});
+    const username = String(req.body?.username || 'zeronoice').trim().replace(/^@/,'').toLowerCase();
+    const target = Object.values(db.users).find(u => u.username === username);
+    if (!target) return res.status(404).json({error:'Пользователь не найден'});
+    const amount = Number(req.body?.amount);
+    if (!Number.isSafeInteger(amount) || amount < 1 || amount > 1000000) return res.status(400).json({error:'Количество должно быть от 1 до 1 000 000'});
+    db.wallets[target.id] = (db.wallets[target.id] || 0) + amount;
+    save(); res.json({ok:true,username:target.username,coins:db.wallets[target.id]});
   });
   app.get('/api/social/leaderboard', auth, (req,res) => {
     const rows=Object.values(db.users).map(u=>({profile:profileOf(u)})).sort((a,b)=>(b.profile.postCount*5+b.profile.messages*0.2)-(a.profile.postCount*5+a.profile.messages*0.2)).slice(0,20);
