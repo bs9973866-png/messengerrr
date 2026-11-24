@@ -570,3 +570,11 @@ body{background:radial-gradient(ellipse at 12% -8%,rgba(32,118,184,.18),transpar
 .profile-pet span{display:none!important}.screen-flash:after{animation:none!important;opacity:1!important}.gift-confetti i{animation:giftburst var(--duration) var(--delay) cubic-bezier(.12,.72,.2,1) forwards}@keyframes giftburst{0%{opacity:0;transform:translate(0,0) rotate(0) scale(.3)}12%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--spin)) scale(1)}}
 
 .profile-pet:not(:has(img)){display:none!important}
+
+.social-menu-trigger{display:none}
+@media(max-width:760px){
+ .app.chat-index-open .social-menu-trigger,.app.social-page-open .social-menu-trigger{display:grid;place-items:center;position:fixed;top:calc(10px + env(safe-area-inset-top));left:12px;z-index:70;width:42px;height:42px;border-radius:13px;border:1px solid rgba(125,190,232,.25);background:rgba(11,31,50,.96);color:#eaf7ff;font-size:21px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+ .app.chat-index-open .side,.app.social-page-open .side{display:flex;position:fixed;z-index:65;inset:0 auto 0 0;width:min(86vw,340px);transform:translateX(-105%);transition:transform .22s ease;box-shadow:18px 0 55px rgba(0,0,0,.4)}
+ .app.chat-index-open.drawer-open .side,.app.social-page-open.drawer-open .side{transform:translateX(0)}
+ .app.chat-index-open .social-view,.app.social-page-open .social-view{padding-top:64px!important}
+}
