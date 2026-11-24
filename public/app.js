@@ -4,7 +4,7 @@ const $=s=>document.querySelector(s), esc=s=>String(s||'').replace(/[&<>"']/g,c=
 const icon=(name,cls='')=>'<svg class="ui-icon '+cls+'" aria-hidden="true"><use href="#i-'+name+'"/></svg>';
 const navImage=name=>'<img class="nav-art" src="/assets/icons/'+name+'.svg" alt="" loading="eager">';
 const api=async(u,o={})=>{const r=await fetch('/api'+u,{credentials:'same-origin',headers:{'Content-Type':'application/json'},...o});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||'Ошибка');return d};
-let me,chats=[],profile,ws,active=null,msgs=[],snow=true;
+let me,chats=[],profile,ws,active=null,msgs=[],snow=false;
 const toast=t=>{let n=$('#toast');if(!n){n=document.createElement('div');n.id='toast';n.className='toast';document.body.append(n)}n.textContent=t;n.classList.add('show');setTimeout(()=>n.classList.remove('show'),2300)};
 const av=u=>'<span class="avatar">'+(u&&u.avatar?'<img src="'+u.avatar+'">':esc((u&&u.name||'?').slice(0,1)))+'</span>';
 async function compressImage(file, maxSide=900, maxChars=110000) {
@@ -24,7 +24,7 @@ async function uploadChatFile(file, kind='file', extra={}) {
   const form=new FormData();form.append('file',file,file.name||('upload-'+Date.now()));form.append('chatId',active.id);form.append('kind',kind);
   for(const [key,value] of Object.entries(extra||{})) form.append(key,String(value));
   const r=await fetch('/api/upload',{method:'POST',body:form,credentials:'same-origin'});const d=await r.json().catch(()=>({}));
-  if(!r.ok)throw Error(d.error||'Не удалось загрузить файл');if(d.message){msgs.push(d.message);renderMsgs();}
+  if(!r.ok)throw Error(d.error||'Не удалось загрузить файл');
 }
 async function createGroup(){
   modal('Новая группа','<label>Название группы<input id="groupName" maxlength="60" placeholder="Например, Друзья"></label><label>Найти участников<input id="groupSearch" placeholder="Имя или username"></label><div id="groupUsers"></div>','<button id="createGroupNow" class="primary">Создать группу</button>');
