@@ -208,3 +208,38 @@ input, textarea { font: inherit; color: inherit; }
   .bubble { max-width: 86%; }
   .vnote { width: 210px; height: 210px; }
 }
+
+
+/* NOVA social expansion */
+.social-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:8px 12px;border-bottom:1px solid var(--line)}
+.social-nav button{padding:9px 10px;border-radius:10px;background:var(--panel2);font-size:13px;text-align:left}
+.social-nav button.active,.social-nav button:hover{background:var(--accent);color:#fff}
+.wallet{display:flex;align-items:center;gap:8px;margin:8px 12px;padding:10px 12px;border-radius:12px;background:linear-gradient(120deg,#d9efff,#edf6ff);color:#235a86}
+.wallet b{font-size:18px}.wallet small{color:#55748e}
+.social-view{position:absolute;inset:0;overflow:auto;padding:24px;display:block;background:var(--bg)}
+.social-hero{padding:34px;border-radius:22px;background:linear-gradient(125deg,#dcefff,#f5faff 60%,#d9e8ff);color:#183c5b;max-width:900px}
+.social-hero h2{font-size:clamp(26px,4vw,42px);margin:0 0 10px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 8px 24px rgba(15,40,70,.06)}
+.panel textarea,.panel input{display:block;width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);margin:7px 0 12px}
+.panel button,.shop-card button{border-radius:10px;padding:9px 13px;background:var(--accent);color:#fff}
+.post{max-width:760px}.post p{white-space:pre-wrap;overflow-wrap:anywhere}
+.post footer{display:flex;gap:10px;border-top:1px solid var(--line);padding-top:10px}
+.post footer button{background:var(--panel2);color:var(--text)}
+.profile-banner{height:170px;border-radius:18px;background:linear-gradient(125deg,#173e61,#6ca4cf);background-size:cover;background-position:center;margin-bottom:14px}
+.badge{display:inline-block;border-radius:20px;background:#e4f1ff;color:#275d88;padding:5px 10px;margin:3px;font-size:12px}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.shop-card{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.shop-art{font-size:42px;min-height:70px;display:grid;place-items:center}
+.shop-card .secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.social-view h2{margin:10px 0 14px}
+.social-view .avatar{display:inline-grid;vertical-align:middle;margin-right:8px}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.social-view label{display:block;font-size:13px;color:var(--muted);margin:8px 0}
+.social-view input,.social-view textarea,.social-view select{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;background:var(--panel2);color:var(--text)}
+.social-view .primary{margin-top:8px}
+.social-view .sticker-grid img{object-fit:contain;max-width:80px;max-height:80px;margin:5px}
+.social-view video{display:block;width:min(100%,420px);margin-top:12px;border-radius:14px;background:#000}
+.social-nav button{color:var(--text)}
+body.snow-mode:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:20;opacity:.35;background-image:radial-gradient(2px 2px at 20px 30px,#fff 99%,transparent),radial-gradient(2px 2px at 80px 110px,#fff 99%,transparent),radial-gradient(1px 1px at 130px 70px,#fff 99%,transparent);background-size:170px 160px;animation:novaSnow 12s linear infinite}
+@keyframes novaSnow{from{background-position:0 -160px}to{background-position:0 160px}}
+@media(max-width:700px){.social-view{padding:14px}.social-nav{grid-template-columns:repeat(3,1fr)}.social-nav button{font-size:11px;padding:8px 5px}.social-hero{padding:22px}.shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
