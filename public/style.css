@@ -355,3 +355,59 @@ button:active{transform:scale(.97)}
  #app .chat-head .head-info{gap:8px}
  #app .composer-wrap{padding-bottom:max(8px,env(safe-area-inset-bottom))}
 }
+
+
+/* Premium icon system and interaction polish */
+.icon-library{position:absolute;width:0;height:0;overflow:hidden}
+.ui-icon{width:21px;height:21px;display:inline-block;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
+.brand-icon{width:54px;height:54px;fill:none;stroke:#78d1ff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 18px rgba(54,168,255,.5))}
+.logo{display:grid;place-items:center}
+.logo.big .brand-icon{width:72px;height:72px}
+.menu-fab{border-radius:14px}
+#app .social-nav button{display:flex;align-items:center;gap:14px;min-height:48px;padding:0 14px}
+#app .social-nav button .ui-icon{width:20px;height:20px;color:#78caff}
+#app .social-nav button:before{display:none}
+#app .social-nav button span:not(.ui-icon){font-weight:600}
+#app .social-nav button.active .ui-icon{color:#fff}
+.wallet{display:flex;align-items:center;gap:8px;padding:13px 14px;border-radius:14px;font-size:13px}
+.wallet .ui-icon{width:19px;height:19px;color:#6bc8ff}
+.wallet b{font-size:17px;font-variant-numeric:tabular-nums}
+.side-head .icon{width:40px;height:40px;border-radius:13px}
+.side-head .icon .ui-icon{width:19px;height:19px}
+.chat-head .icon{border-radius:13px}
+.composer .icon{width:42px;height:42px;border-radius:14px}
+.composer .send{background:linear-gradient(135deg,#4ab8ff,#2587e8);color:#071827;border:0}
+.composer .send .ui-icon{width:20px;height:20px}
+.react-btn{display:inline-grid;place-items:center;width:25px;height:23px;border-radius:8px;color:#8bbfe9}
+.react-btn .ui-icon{width:15px;height:15px}
+.social-view{width:100%;max-width:1080px;margin:0 auto;overflow-y:auto}
+.social-view h2{font-size:20px;letter-spacing:-.3px;margin:10px 0 16px}
+.social-view .panel{padding:18px;margin-bottom:14px;border:1px solid rgba(115,176,225,.13)}
+.social-hero{padding:34px!important;border-radius:22px!important;max-width:900px}
+.social-hero h2{font-size:clamp(22px,4vw,32px);margin:0 0 8px}
+.social-hero p{color:#c0d8ef;margin:0;max-width:540px}
+.post{border-radius:18px}
+.post footer{display:flex;gap:10px;margin-top:14px}
+.post footer button{display:inline-flex;align-items:center;gap:7px;border-radius:11px;padding:8px 12px}
+.post footer .ui-icon{width:16px;height:16px}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin-bottom:26px}
+.shop-card{display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-height:190px}
+.shop-card .shop-art{width:100%;height:94px;display:grid;place-items:center;border-radius:14px;background:radial-gradient(circle,rgba(46,158,225,.24),rgba(10,26,45,.4) 70%);border:1px solid rgba(91,171,230,.12)}
+.shop-art .ui-icon{width:48px;height:48px;color:#83d5ff;filter:drop-shadow(0 0 14px rgba(42,165,239,.4))}
+.shop-card .price{display:flex;align-items:center;gap:6px;margin:0;color:#bfe7ff}
+.shop-card .price .ui-icon{width:16px;height:16px}
+.shop-card button{width:100%;margin-top:auto;border-radius:11px;padding:10px}
+.user-result{width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:10px;border-radius:12px;background:#0d1b2c;border:1px solid var(--line);margin:5px 0}
+.user-result span:last-child{display:grid;gap:2px}
+.user-result small,.muted-note{color:var(--muted);font-size:12px}
+.empty-state{text-align:center;color:var(--muted);padding:28px!important}
+.gift-option{display:flex;align-items:center;gap:10px;width:100%;margin:5px 0}
+.gift-option .ui-icon{width:20px;height:20px;color:#83d5ff}
+.profile-banner{border-radius:20px 20px 0 0;min-height:150px;background-size:cover;background-position:center}
+#socialView .profile-banner+.panel{border-radius:0 0 20px 20px}
+#socialView .profile-banner+.panel h2{margin:12px 0 4px}
+#socialView input,#socialView textarea,#socialView select,.panel textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);outline:none}
+#socialView input:focus,#socialView textarea:focus,#socialView select:focus,.panel textarea:focus{border-color:rgba(77,178,244,.7);box-shadow:0 0 0 3px rgba(52,151,220,.1)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #58baff;outline-offset:2px}
+button:disabled{opacity:.55;cursor:wait}
+@media(max-width:600px){.shop-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.shop-card{min-height:175px;padding:12px!important}.social-hero{padding:24px!important}.social-view h2{font-size:18px}}
