@@ -98,8 +98,8 @@ module.exports = function mountSocial(app, ctx) {
   app.get('/api/social/shop', auth, (req,res) => res.json({
     coins:db.wallets[req.user.id]||0,
     ownedPets:db.pets[req.user.id]||[],
-    pets:[{id:'cloud-cat',name:'Облачный кот',price:80,art:'🐈‍⬛'},{id:'snow-fox',name:'Снежный лис',price:120,art:'🦊'},{id:'pixel-ghost',name:'Пиксельный призрак',price:160,art:'👻'},{id:'tiny-dragon',name:'Мини-дракон',price:220,art:'🐉'}],
-    gifts:[{id:'meme-wow',name:'ВОУ',price:15,art:'🤯'},{id:'meme-bruh',name:'БРУХ',price:20,art:'🗿'},{id:'arcade',name:'Аркада',price:35,art:'🕹️'},{id:'pixel-heart',name:'Пиксельное сердце',price:25,art:'💖'}]
+    pets:[{id:'cloud-cat',name:'Облачный кот',price:80,art:'/assets/illustrations/pet-cloud.svg'},{id:'snow-fox',name:'Снежный лис',price:120,art:'/assets/illustrations/pet-fox.svg'},{id:'pixel-ghost',name:'Пиксельный призрак',price:160,art:'/assets/illustrations/pet-ghost.svg'},{id:'tiny-dragon',name:'Мини-дракон',price:220,art:'/assets/illustrations/pet-dragon.svg'}],
+    gifts:[{id:'meme-wow',name:'ВОУ',price:15,art:'/assets/illustrations/gift-wow.svg'},{id:'meme-bruh',name:'БРУХ',price:20,art:'/assets/illustrations/gift-bruh.svg'},{id:'arcade',name:'Аркада',price:35,art:'/assets/illustrations/gift-arcade.svg'},{id:'pixel-heart',name:'Пиксельное сердце',price:25,art:'/assets/illustrations/gift-heart.svg'}]
   }));
   app.post('/api/social/shop/buy', auth, (req,res) => {
     const id=String(req.body?.id||'');
