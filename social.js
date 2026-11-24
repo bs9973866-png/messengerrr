@@ -1,7 +1,9 @@
 'use strict';
+const fs = require('fs');
+const path = require('path');
 
 module.exports = function mountSocial(app, ctx) {
-  const { auth, db, save, newId, cleanText, addMessage, broadcastMessage } = ctx;
+  const { auth, db, save, newId, cleanText, addMessage, broadcastMessage, upload, UPLOAD_DIR } = ctx;
   db.posts ||= {};
   db.wallets ||= {};
   db.activity ||= {};
@@ -25,7 +27,7 @@ module.exports = function mountSocial(app, ctx) {
       bio: p.bio || '', status: p.status || '', avatar: p.avatar || '',
       banner: p.banner || '', theme: p.theme || 'winter',
       badges, pet: p.pet || '', coins: db.wallets[u.id] || 0,
-      statusImage: p.statusImage || '', musicTitle: p.musicTitle || '', musicUrl: p.musicUrl || '',
+      statusImage: p.statusImage || '', musicFileUrl: p.musicFileId ? '/api/files/' + encodeURIComponent(p.musicFileId) : '',
       accent: p.accent || '#55baff', frame: p.frame || 'none',
       postCount: posts.length, joinedAt: u.createdAt,
       messages: (db.activity[u.id] || {}).messages || 0,
@@ -66,8 +68,7 @@ module.exports = function mountSocial(app, ctx) {
     if (req.body?.avatar !== undefined) { if (req.body.avatar && !validImage(req.body.avatar)) return res.status(400).json({error:'Аватар должен быть PNG, JPG, GIF или WebP до 90 КБ'}); p.avatar = req.body.avatar || ''; }
     if (req.body?.banner !== undefined) { if (req.body.banner && !validImage(req.body.banner)) return res.status(400).json({error:'Баннер должен быть PNG, JPG, GIF или WebP до 90 КБ'}); p.banner = req.body.banner || ''; }
     if (req.body?.statusImage !== undefined) { if (req.body.statusImage && !validImage(req.body.statusImage)) return res.status(400).json({error:'Картинка статуса должна быть PNG, JPG, GIF или WebP до 90 КБ'}); p.statusImage = req.body.statusImage || ''; }
-    if (req.body?.musicTitle !== undefined) p.musicTitle = cleanText(req.body.musicTitle, 80);
-    if (req.body?.musicUrl !== undefined) { const url = String(req.body.musicUrl || '').trim(); if (url && (!/^https:\/\//i.test(url) || url.length > 500)) return res.status(400).json({error:'Ссылка на музыку должна начинаться с https://'}); p.musicUrl = url; }
+    
     if (req.body?.accent !== undefined) p.accent = /^#[0-9a-f]{6}$/i.test(String(req.body.accent)) ? String(req.body.accent) : '#55baff';
     if (req.body?.frame !== undefined) p.frame = ['none','neon','ice','ghoul','gold'].includes(req.body.frame) ? req.body.frame : 'none';
     save();
@@ -156,12 +157,14 @@ module.exports = function mountSocial(app, ctx) {
     res.json({profile:profileOf(req.user)});
   });
   app.get('/api/social/stickers', auth, (req,res) => res.json({packs:Object.values(db.stickerPacks).filter(p=>p.ownerId===req.user.id || p.public).map(p=>({...p,owner:db.users[p.ownerId]?.name||'Автор'}))}));
-  app.post('/api/social/stickers', auth, (req,res) => {
-    const name=cleanText(req.body?.name,40);
-    const stickers=Array.isArray(req.body?.stickers)?req.body.stickers.slice(0,30):[];
-    if(!name || !stickers.length || stickers.some(s=>!validImage(s))) return res.status(400).json({error:'Добавь название и до 30 PNG/GIF/WebP-стикеров'});
-    const pack={id:newId(),ownerId:req.user.id,name,stickers,public:true,createdAt:Date.now()};
-    db.stickerPacks[pack.id]=pack; save(); res.json({pack});
+  app.post('/api/social/stickers', auth, (req,res,next) => {
+    upload.array('stickers',30)(req,res,err=>{if(err)return res.status(400).json({error:err.code==='LIMIT_FILE_SIZE'?'Стикер превышает общий лимит загрузки':'Не удалось загрузить стикеры'});next()});
+  }, (req,res) => {
+    const name=cleanText(req.body?.name,40), files=req.files||[];
+    const bad=files.find(f=>f.size>30*1024*1024 || !['image/png','image/jpeg','image/gif','image/webp'].includes(String(f.mimetype||'').split(';')[0].toLowerCase()));
+    if(!name || !files.length || bad){for(const f of files)fs.unlink(path.join(UPLOAD_DIR,f.filename),()=>{});return res.status(400).json({error:!name?'Укажи название стикерпака':!files.length?'Добавь хотя бы один стикер':'Каждый стикер должен быть PNG/JPG/GIF/WebP не больше 30 МБ'});}
+    const stickers=files.map(f=>{const mime=String(f.mimetype).split(';')[0].toLowerCase();db.files[f.filename]={id:f.filename,owner:req.user.id,scope:'sticker',name:f.originalname,mime,size:f.size};return {fileId:f.filename,name:f.originalname,mime,url:'/api/files/'+encodeURIComponent(f.filename)};});
+    const pack={id:newId(),ownerId:req.user.id,name,stickers,public:true,createdAt:Date.now()};db.stickerPacks[pack.id]=pack;save();res.json({pack});
   });
   app.post('/api/social/stickers/:id/send', auth, (req,res) => {
     const pack = db.stickerPacks[req.params.id];
@@ -170,9 +173,11 @@ module.exports = function mountSocial(app, ctx) {
     if (!pack || (!pack.public && pack.ownerId !== req.user.id)) return res.status(404).json({error:'Стикерпак не найден'});
     if (!chat || !chat.members.includes(req.user.id)) return res.status(404).json({error:'Чат не найден'});
     if (!Number.isInteger(index) || index < 0 || index >= pack.stickers.length) return res.status(400).json({error:'Стикер не найден'});
-    const stickerData = pack.stickers[index];
-    if (!validImage(stickerData)) return res.status(400).json({error:'Некорректный стикер'});
-    const message = addMessage(chat, req.user.id, {type:'sticker', stickerData, stickerName:pack.name});
+    const sticker = pack.stickers[index];
+    const stickerFileId = typeof sticker==='string' ? '' : sticker.fileId;
+    const stickerData = typeof sticker==='string' ? sticker : '';
+    if ((!stickerFileId || !db.files[stickerFileId]) && !validImage(stickerData)) return res.status(400).json({error:'Некорректный стикер'});
+    const message = addMessage(chat, req.user.id, {type:'sticker', stickerFileId, stickerData, stickerName:pack.name});
     broadcastMessage(chat, message);
     res.json({ok:true, message});
   });
@@ -190,7 +195,7 @@ module.exports = function mountSocial(app, ctx) {
     db.gifts.sent ||= []; db.gifts.sent.push(item);
     const message = addMessage(chat, req.user.id, { type:'gift', gift, text:'Подарок отправлен: '+gift });
     broadcastMessage(chat, message); save();
-    res.json({gift:item});
+    res.json({gift:item,message});
   });
   app.get('/api/social/admin/users', auth, (req,res) => {
     if (!isAdmin(req.user)) return res.status(403).json({error:'Недостаточно прав'});
