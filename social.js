@@ -10,7 +10,11 @@ module.exports = function mountSocial(app, ctx) {
   db.pets ||= {};
   db.profiles ||= {};
   db.bans ||= {};
-  const isAdmin = (u) => String(u?.username || '').toLowerCase() === 'zeronoice';
+  if (!db.adminId) {
+    const owner = Object.values(db.users).find(u => String(u.username || '').toLowerCase() === 'zeronoice');
+    if (owner) { db.adminId = owner.id; save(); }
+  }
+  const isAdmin = (u) => !!db.adminId && u?.id === db.adminId;
 
   const profileOf = (u) => {
     const p = db.profiles[u.id] || {};
