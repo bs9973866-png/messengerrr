@@ -509,7 +509,8 @@ app.post('/api/upload', auth, (req, res, next) => {
 
 app.get('/api/files/:id', auth, (req, res) => {
   const f = db.files[req.params.id];
-  if (!f || (f.scope !== 'feed' && !memberChat(req.user.id, f.chatId))) return res.status(404).json({ error: 'Файл не найден' });
+  const feedAccess = f?.scope === 'feed' && (f.owner === req.user.id || Object.values(db.posts || {}).some(post => post.file?.id === f.id));
+  if (!f || (!feedAccess && !memberChat(req.user.id, f.chatId))) return res.status(404).json({ error: 'Файл не найден' });
   const inline = INLINE_MIME.has(f.mime) && req.query.download !== '1';
   res.setHeader('Content-Type', INLINE_MIME.has(f.mime) ? f.mime : 'application/octet-stream');
   res.setHeader('Content-Disposition', `${inline ? 'inline' : 'attachment'}; filename*=UTF-8''${encodeURIComponent(f.name)}`);
