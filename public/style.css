@@ -568,3 +568,5 @@ body{background:radial-gradient(ellipse at 12% -8%,rgba(32,118,184,.18),transpar
 .profile-music{display:grid;gap:8px;max-width:420px}.profile-music audio{width:min(100%,360px);height:38px}
 
 .profile-pet span{display:none!important}.screen-flash:after{animation:none!important;opacity:1!important}.gift-confetti i{animation:giftburst var(--duration) var(--delay) cubic-bezier(.12,.72,.2,1) forwards}@keyframes giftburst{0%{opacity:0;transform:translate(0,0) rotate(0) scale(.3)}12%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--spin)) scale(1)}}
+
+.profile-pet:not(:has(img)){display:none!important}
