@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2b7cd3">
+  <title>Мессенджер</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232b7cd3'/%3E%3Cpath d='M16 20h32v20H30l-8 8v-8h-6z' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="auth" class="auth" hidden>
+    <form id="authForm" class="auth-card" autocomplete="on">
+      <div class="logo">💬</div>
+      <h1>Мессенджер</h1>
+      <div class="tabs">
+        <button type="button" id="tabLogin" class="active">Вход</button>
+        <button type="button" id="tabRegister">Регистрация</button>
+      </div>
+      <input id="fName" name="name" placeholder="Ваше имя" maxlength="40" autocomplete="name" hidden>
+      <input id="fUser" name="username" placeholder="Логин (латиница, цифры, _)" maxlength="24" autocomplete="username" autocapitalize="none" required>
+      <input id="fPass" name="password" type="password" placeholder="Пароль (от 6 символов)" maxlength="200" autocomplete="current-password" required>
+      <div id="authError" class="error" role="alert"></div>
+      <button class="primary" id="authSubmit" type="submit">Войти</button>
+    </form>
+  </div>
+
+  <div id="app" class="app" hidden>
+    <aside id="side" class="side">
+      <header class="side-head">
+        <button id="meBtn" class="me" title="Профиль"></button>
+        <div class="grow"></div>
+        <button id="notifBtn" class="icon" title="Включить уведомления" hidden>🔔</button>
+        <button id="newChatBtn" class="icon" title="Новый чат">✏️</button>
+        <button id="newGroupBtn" class="icon" title="Новая группа">👥</button>
+      </header>
+      <div class="search"><input id="chatSearch" placeholder="Поиск по чатам" autocomplete="off"></div>
+      <div id="chatList" class="chat-list"></div>
+      <div id="connState" class="conn" hidden>Соединение…</div>
+    </aside>
+
+    <main id="main" class="main">
+      <div id="empty" class="empty">
+        <div class="logo big">💬</div>
+        <p>Выберите чат или начните новый</p>
+      </div>
+      <section id="chatView" class="chat-view" hidden>
+        <header class="chat-head">
+          <button id="backBtn" class="icon back" title="Назад">←</button>
+          <div id="headInfo" class="head-info"></div>
+          <button id="audioCallBtn" class="icon" title="Аудиозвонок">📞</button>
+          <button id="videoCallBtn" class="icon" title="Видеозвонок">📹</button>
+        </header>
+        <div id="messages" class="messages"></div>
+        <button id="toBottom" class="to-bottom" hidden title="Вниз">↓<span id="toBottomBadge"></span></button>
+        <div id="dropHint" class="drop-hint" hidden>Отпустите, чтобы отправить файлы</div>
+        <footer class="composer-wrap">
+          <div id="ctxBar" class="ctx-bar" hidden></div>
+          <div id="composer" class="composer">
+            <button id="attachBtn" class="icon" title="Прикрепить файл">📎</button>
+            <textarea id="input" rows="1" placeholder="Сообщение" maxlength="4000"></textarea>
+            <button id="micBtn" class="icon" title="Голосовое сообщение">🎤</button>
+            <button id="camBtn" class="icon" title="Видеосообщение (кружок)">⭕</button>
+            <button id="sendBtn" class="icon send" title="Отправить" hidden>➤</button>
+            <input id="fileInput" type="file" multiple hidden>
+          </div>
+          <div id="recBar" class="rec-bar" hidden></div>
+        </footer>
+      </section>
+    </main>
+  </div>
+
+  <div id="layer"></div>
+  <script src="app.js"></script>
+</body>
+</html>
