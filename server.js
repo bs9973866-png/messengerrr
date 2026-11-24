@@ -265,6 +265,7 @@ function userFromReq(req) {
 function auth(req, res, next) {
   const u = userFromReq(req);
   if (!u) return res.status(401).json({ error: 'Требуется вход' });
+  if (db.bans?.[u.id]) return res.status(403).json({ error: 'Аккаунт заблокирован: ' + (db.bans[u.id].reason || 'нарушение правил') });
   req.user = u;
   next();
 }
@@ -327,6 +328,7 @@ app.post('/api/login', async (req, res) => {
     const hash = await hashPassword(pw, user ? user.salt : 'x'.repeat(32));
     const ok = user && crypto.timingSafeEqual(Buffer.from(hash, 'hex'), Buffer.from(user.hash, 'hex'));
     if (!ok) return res.status(401).json({ error: 'Неверный логин или пароль' });
+    if (db.bans?.[user.id]) return res.status(403).json({ error: 'Аккаунт заблокирован: ' + (db.bans[user.id].reason || 'нарушение правил') });
     startSession(req, res, user);
     res.json({ ok: true });
   } catch (e) {
@@ -468,10 +470,18 @@ app.post('/api/upload', auth, (req, res, next) => {
   const file = req.file;
   if (!file) return res.status(400).json({ error: 'Файл не передан' });
   const reject = (code, error) => { fs.unlink(file.path, () => {}); return res.status(code).json({ error }); };
+  const kind = String(req.body.kind || '');
+  if (kind === 'post') {
+    const mime = normMime(file.mimetype);
+    if (!mime.startsWith('image/') && !mime.startsWith('video/')) return reject(400, 'Для поста можно загрузить только фото или видео');
+    const info = { id: file.filename, name: sanitizeFilename(file.originalname), size: file.size, mime };
+    db.files[info.id] = { id: info.id, owner: req.user.id, scope: 'feed', name: info.name, mime: info.mime, size: info.size };
+    save();
+    return res.json({ ok: true, file: info });
+  }
   const chat = memberChat(req.user.id, String(req.body.chatId || ''));
   if (!chat) return reject(403, 'Нет доступа к чату');
   let mime = normMime(file.mimetype);
-  const kind = String(req.body.kind || '');
   if ((kind === 'voice' || kind === 'videonote') && !INLINE_MIME.has(mime)) {
     // Some browsers send recorder types with codec lists that multipart parsers mangle;
     // recover the container from the file signature instead of trusting the header.
@@ -498,7 +508,7 @@ app.post('/api/upload', auth, (req, res, next) => {
 
 app.get('/api/files/:id', auth, (req, res) => {
   const f = db.files[req.params.id];
-  if (!f || !memberChat(req.user.id, f.chatId)) return res.status(404).json({ error: 'Файл не найден' });
+  if (!f || (f.scope !== 'feed' && !memberChat(req.user.id, f.chatId))) return res.status(404).json({ error: 'Файл не найден' });
   const inline = INLINE_MIME.has(f.mime) && req.query.download !== '1';
   res.setHeader('Content-Type', INLINE_MIME.has(f.mime) ? f.mime : 'application/octet-stream');
   res.setHeader('Content-Disposition', `${inline ? 'inline' : 'attachment'}; filename*=UTF-8''${encodeURIComponent(f.name)}`);
@@ -534,6 +544,7 @@ server.on('upgrade', (req, socket, head) => {
   if (!originOk(req)) return reject('403 Forbidden');
   const user = userFromReq(req);
   if (!user) return reject('401 Unauthorized');
+  if (db.bans?.[user.id]) return reject('403 Forbidden');
   wss.handleUpgrade(req, socket, head, (ws) => {
     ws.userId = user.id;
     wss.emit('connection', ws, req);
