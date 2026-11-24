@@ -470,3 +470,37 @@ button:disabled{opacity:.55;cursor:wait}
 .admin-user small{color:var(--muted)}
 .admin-status{font-size:11px;color:#72d8a4}
 .admin-status.is-banned{color:#ff8794}
+
+/* NOVA UI refinement: illustrated navigation, calmer hierarchy and consistent surfaces */
+:root{--surface-raised:rgba(14,31,51,.92);--surface-soft:rgba(21,48,75,.58);--line-soft:rgba(135,198,240,.13);--blue-glow:rgba(53,160,232,.16)}
+body{background:radial-gradient(ellipse at 12% -8%,rgba(32,118,184,.18),transparent 38%),radial-gradient(ellipse at 100% 100%,rgba(18,75,122,.16),transparent 34%),#07111d}
+.app{background:transparent}
+.side{background:linear-gradient(180deg,rgba(10,25,42,.98),rgba(7,18,32,.99));border-right:1px solid var(--line-soft);box-shadow:18px 0 55px rgba(0,0,0,.22)}
+.side-head{padding:18px 16px 14px}
+.me{border-radius:16px;padding:8px 10px;background:rgba(30,75,112,.24);border:1px solid var(--line-soft)}
+.me:hover{background:rgba(40,105,154,.32)}
+.social-nav{display:grid;gap:7px;padding:13px 13px 17px;border-bottom:1px solid var(--line-soft)}
+.social-nav button{display:flex;align-items:center;gap:13px;min-height:62px;padding:7px 13px;border:1px solid transparent;border-radius:16px;background:transparent;color:#c7e5fa;text-align:left;font-weight:650;letter-spacing:.1px;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.social-nav button:hover{background:linear-gradient(105deg,rgba(35,117,176,.22),rgba(19,44,68,.52));border-color:rgba(93,182,235,.17);transform:translateX(2px)}
+.social-nav button:active{transform:scale(.985)}
+.social-nav button .nav-art{display:block;width:38px;height:38px;flex:0 0 38px;object-fit:contain;padding:5px;border-radius:12px;background:linear-gradient(145deg,rgba(42,121,175,.24),rgba(12,34,57,.7));filter:drop-shadow(0 4px 8px rgba(22,126,195,.15))}
+.social-nav button span:last-child{font-size:14px}
+.social-nav button[data-page="chats"]{background:linear-gradient(105deg,rgba(34,121,184,.22),rgba(17,42,67,.35));border-color:rgba(94,188,242,.14)}
+.wallet{margin:12px 14px!important;padding:12px 14px!important;border:1px solid rgba(83,173,226,.18)!important;border-radius:15px!important;background:linear-gradient(110deg,rgba(31,92,136,.24),rgba(15,35,57,.68))!important}
+.search{padding:12px 14px}
+.search input{border-radius:14px!important;background:rgba(17,38,60,.78)!important;border:1px solid var(--line-soft)!important}
+.chat-item{border-radius:15px!important;margin:3px 9px!important;transition:background .18s ease,transform .18s ease}
+.chat-item:hover{background:rgba(44,105,151,.2)!important;transform:translateX(2px)}
+.main{background:transparent}
+.chat-head{background:rgba(8,22,37,.84)!important;border-bottom:1px solid var(--line-soft)!important;backdrop-filter:blur(18px)}
+.composer-wrap{background:linear-gradient(180deg,rgba(7,18,31,.4),rgba(7,18,31,.96))!important}
+.composer{border:1px solid rgba(115,190,235,.16)!important;border-radius:19px!important;background:rgba(15,34,54,.92)!important;box-shadow:0 8px 30px rgba(0,0,0,.18)}
+.composer textarea{color:#e8f5ff}
+.icon{transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.icon:hover{background:rgba(58,147,204,.18);border-color:rgba(105,195,245,.24)}
+.panel,.modal,.auth-card{border:1px solid rgba(125,190,232,.16)!important;background:linear-gradient(155deg,rgba(17,38,60,.98),rgba(8,22,38,.98))!important;box-shadow:0 22px 70px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.025)!important}
+.panel{border-radius:21px!important}
+.primary{background:linear-gradient(120deg,#238fce,#1766a8)!important;box-shadow:0 8px 22px rgba(28,126,190,.2);border:1px solid rgba(148,220,255,.18)!important}
+.primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.secondary{border:1px solid rgba(115,190,235,.2)!important;background:rgba(37,81,116,.3)!important}
+@media(max-width:600px){.social-nav{padding:11px}.social-nav button{min-height:59px}.social-nav button .nav-art{width:36px;height:36px;flex-basis:36px}}
