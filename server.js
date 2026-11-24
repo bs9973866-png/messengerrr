@@ -449,10 +449,9 @@ app.get('/api/chats/:id/messages', auth, (req, res) => {
 });
 
 // ── uploads ──
-const upload = multer({
-  storage: multer.diskStorage({ destination: UPLOAD_DIR, filename: (req, file, cb) => cb(null, newId()) }),
-  limits: { fileSize: MAX_UPLOAD, files: 1, fields: 12, fieldSize: 4096 },
-});
+const storage = multer.diskStorage({ destination: UPLOAD_DIR, filename: (req, file, cb) => cb(null, newId()) });
+const upload = multer({ storage, limits: { fileSize: MAX_UPLOAD, files: 1, fields: 12, fieldSize: 4096 } });
+const stickerUpload = multer({ storage, limits: { fileSize: 30 * 1024 * 1024, files: 30, fields: 2, fieldSize: 1024 } });
 app.post('/api/profile/music', auth, (req,res,next) => {
   upload.single('file')(req,res,err => {
     if(err){const msg=err.code==='LIMIT_FILE_SIZE'?'MP3 больше допустимого размера':'Ошибка загрузки MP3';return res.status(400).json({error:msg});}
@@ -544,7 +543,7 @@ app.get('/api/files/:id', auth, (req, res) => {
   });
 });
 
-require('./social')(app, { auth, db, save, newId, cleanText, addMessage, broadcastMessage, upload, UPLOAD_DIR });
+require('./social')(app, { auth, db, save, newId, cleanText, addMessage, broadcastMessage, upload, stickerUpload, UPLOAD_DIR });
 
 app.use(express.static(PUBLIC_DIR));
 app.use('/api', (req, res) => res.status(404).json({ error: 'Не найдено' }));
