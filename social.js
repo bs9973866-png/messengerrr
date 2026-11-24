@@ -195,8 +195,8 @@ module.exports = function mountSocial(app, ctx) {
   });
   app.post('/api/social/admin/coins', auth, (req,res) => {
     if (!isAdmin(req.user)) return res.status(403).json({error:'Недостаточно прав'});
-    const username = String(req.body?.username || 'zeronoice').trim().replace(/^@/,'').toLowerCase();
-    const target = Object.values(db.users).find(u => u.username === username);
+    const username = String(req.body?.username || '').trim().replace(/^@/,'').toLowerCase();
+    const target = username ? Object.values(db.users).find(u => u.username === username) : req.user;
     if (!target) return res.status(404).json({error:'Пользователь не найден'});
     const amount = Number(req.body?.amount);
     if (!Number.isSafeInteger(amount) || amount < 1 || amount > 1000000) return res.status(400).json({error:'Количество должно быть от 1 до 1 000 000'});
