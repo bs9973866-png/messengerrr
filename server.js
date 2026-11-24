@@ -474,7 +474,7 @@ app.post('/api/upload', auth, (req, res, next) => {
   const kind = String(req.body.kind || '');
   if (kind === 'post') {
     const mime = normMime(file.mimetype);
-    if (!mime.startsWith('image/') && !mime.startsWith('video/')) return reject(400, 'Для поста можно загрузить только фото или видео');
+    if (!INLINE_MIME.has(mime) || (!mime.startsWith('image/') && !mime.startsWith('video/'))) return reject(400, 'Поддерживаются PNG, JPG, GIF, WebP, MP4, WebM и MOV');
     const info = { id: file.filename, name: sanitizeFilename(file.originalname), size: file.size, mime };
     db.files[info.id] = { id: info.id, owner: req.user.id, scope: 'feed', name: info.name, mime: info.mime, size: info.size };
     save();
