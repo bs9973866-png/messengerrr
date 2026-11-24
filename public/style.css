@@ -417,3 +417,13 @@ button:disabled{opacity:.55;cursor:wait}
 #socialView .panel>button{margin:5px 6px 5px 0}
 #socialView .panel>label{display:grid;gap:7px;margin:12px 0}
 #socialView .panel>label input[type=file]{padding:10px}
+
+/* Illustrated shop cards */
+.shop-card .shop-art{overflow:hidden;position:relative;background:radial-gradient(ellipse at 50% 25%,rgba(65,173,240,.22),rgba(9,24,42,.82) 72%);min-height:112px}
+.shop-card .shop-art:after{content:"";position:absolute;inset:auto 16% 8px;height:12px;border-radius:50%;background:rgba(0,0,0,.3);filter:blur(8px)}
+.shop-card .shop-art img{width:76px;height:76px;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 9px 15px rgba(36,157,226,.22));transition:transform .25s ease}
+.shop-card:hover .shop-art img{transform:translateY(-4px) scale(1.06)}
+.gift-option img{width:34px;height:34px;object-fit:contain;flex:none;border-radius:9px}
+.gift-option span{flex:1;text-align:left}
+.shop-card b{font-size:14px;letter-spacing:.1px}
+.shop-card .secondary{min-height:40px}
