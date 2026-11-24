@@ -141,6 +141,13 @@ function addMessage(chat, from, fields) {
   (db.messages[chat.id] ||= []).push(m);
   const reads = (db.reads[chat.id] ||= {});
   reads[from] = seq; // author has read their own message
+  if (fields.type === 'text') {
+    db.activity ||= {};
+    db.wallets ||= {};
+    const activity = db.activity[from] ||= { messages: 0 };
+    activity.messages = (activity.messages || 0) + 1;
+    if (activity.messages % 10 === 0) db.wallets[from] = (db.wallets[from] || 0) + 3;
+  }
   save();
   return m;
 }
@@ -233,7 +240,7 @@ app.use('/api', (req, res, next) => {
   if (req.method !== 'GET' && !originOk(req)) return res.status(403).json({ error: 'Запрос отклонён' });
   next();
 });
-app.use(express.json({ limit: '100kb' }));
+app.use(express.json({ limit: '4mb' }));
 
 function parseCookies(header) {
   const out = {};
@@ -499,6 +506,8 @@ app.get('/api/files/:id', auth, (req, res) => {
     if (err && !res.headersSent) res.status(404).json({ error: 'Файл не найден' });
   });
 });
+
+require('./social')(app, { auth, db, save, newId, cleanText });
 
 app.use(express.static(PUBLIC_DIR));
 app.use('/api', (req, res) => res.status(404).json({ error: 'Не найдено' }));
