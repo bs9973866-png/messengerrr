@@ -652,6 +652,22 @@ function handleMessage(ws, msg) {
       if (chat) sendChat(chat, { t: 'typing', chatId: chat.id, userId: uid }, uid);
       return;
     }
+    case 'react': {
+      const chat = memberChat(uid, msg.chatId);
+      if (!chat) return;
+      const m = (db.messages[chat.id] || []).find(x => x.id === msg.id && !x.deleted);
+      const reaction = cleanText(msg.reaction, 24);
+      if (!m || !reaction) return;
+      m.reactions ||= {};
+      m.reactions[reaction] ||= [];
+      const list = m.reactions[reaction];
+      const i = list.indexOf(uid);
+      if (i >= 0) list.splice(i, 1); else list.push(uid);
+      if (!list.length) delete m.reactions[reaction];
+      save();
+      for (const id of chat.members) sendTo(id, { t: 'reaction', chatId: chat.id, id: m.id, reactions: m.reactions });
+      return;
+    }
     case 'read': {
       const chat = memberChat(uid, msg.chatId);
       if (!chat) return;
