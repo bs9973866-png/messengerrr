@@ -91,7 +91,7 @@ function colorFor(seed) {
 function pubUser(u) {
   if (!u) return { id: 'deleted', username: '', name: 'Удалён', color: '#888', online: false, lastSeen: 0 };
   const profile = db.profiles?.[u.id] || {};
-  return { id: u.id, username: u.username, name: u.name, color: u.color, avatar: profile.avatar || '', status: profile.status || '', online: isOnline(u.id), lastSeen: u.lastSeen || 0, admin: !!db.adminId && u.id === db.adminId };
+  return { id: u.id, username: u.username, name: u.name, color: u.color, avatar: profile.avatar || '', status: profile.status || '', statusImage: profile.statusImage || '', online: isOnline(u.id), lastSeen: u.lastSeen || 0, admin: !!db.adminId && u.id === db.adminId };
 }
 
 function msgView(m) {
